@@ -1,5 +1,6 @@
 package com.example.twu.todoapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -46,6 +47,15 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
         );
+
+        lvItems.setOnItemClickListener(
+                new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        launchEditItemView(items.get(position));
+                    }
+                }
+        );
     }
 
     private void readItems() {
@@ -66,6 +76,12 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void launchEditItemView(String item) {
+        Intent i = new Intent(MainActivity.this, EditItemActivity.class);
+        i.putExtra("toDoItem", item);
+        startActivity(i);
     }
 
     public void onAddItem(View v) {
