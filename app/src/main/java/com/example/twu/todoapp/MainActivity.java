@@ -8,6 +8,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.apache.commons.io.FileUtils;
 
@@ -19,6 +20,8 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> items;
     ArrayAdapter<String> itemsAdapter;
     ListView lvItems;
+
+    private final int REQUEST_CODE = 20;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
                 new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        launchEditItemView(items.get(position));
+                        launchEditItemView(items.get(position), position);
                     }
                 }
         );
@@ -78,10 +81,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void launchEditItemView(String item) {
+    private void launchEditItemView(String item, int position) {
         Intent i = new Intent(MainActivity.this, EditItemActivity.class);
         i.putExtra("toDoItem", item);
-        startActivity(i);
+        i.putExtra("position", position);
+        startActivityForResult(i, REQUEST_CODE);
     }
 
     public void onAddItem(View v) {
@@ -90,5 +94,18 @@ public class MainActivity extends AppCompatActivity {
         itemsAdapter.add(itemText);
         etNewItem.setText("");
         writeItems();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                String item = data.getExtras().getString("item");
+                int position = data.getExtras().getInt("position");
+                items.set(position, item);
+                writeItems();
+                Toast.makeText(this, "Edited Successfully", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }
