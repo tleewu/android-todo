@@ -102,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
                 int position = data.getExtras().getInt("position");
                 items.set(position, item);
                 writeItems();
+                itemsAdapter.notifyDataSetChanged();
                 Toast.makeText(this, "Edited Successfully", Toast.LENGTH_SHORT).show();
             }
         }
