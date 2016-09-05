@@ -5,45 +5,42 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import org.apache.commons.io.FileUtils;
-
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    ArrayList<String> items;
-    ArrayAdapter<String> itemsAdapter;
     ListView lvItems;
+    ArrayList<Task> items;
 
     private final int REQUEST_CODE = 20;
+    private TasksAdapter itemsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ToDoDatabaseHelper databaseHelper = ToDoDatabaseHelper.getInstance(this);
+
         lvItems = (ListView) findViewById(R.id.lvItems);
-        items = new ArrayList<>();
-        readItems();
-        itemsAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, items);
+        items = databaseHelper.getAllTasks();
+        itemsAdapter = new TasksAdapter(this, items);
         lvItems.setAdapter(itemsAdapter);
         setupListViewListener();
     }
 
     private void setupListViewListener() {
+        final ToDoDatabaseHelper databaseHelper = ToDoDatabaseHelper.getInstance(this);
+
         lvItems.setOnItemLongClickListener(
                 new AdapterView.OnItemLongClickListener() {
                     @Override
                     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                        databaseHelper.deleteTask(items.get(position).id);
                         items.remove(position);
                         itemsAdapter.notifyDataSetChanged();
-                        writeItems();
                         return true;
                     }
                 }
@@ -53,30 +50,10 @@ public class MainActivity extends AppCompatActivity {
                 new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        launchEditItemView(items.get(position), position);
+                        launchEditItemView(items.get(position).name, position);
                     }
                 }
         );
-    }
-
-    private void readItems() {
-        File filesDir = getFilesDir();
-        File todoFile = new File(filesDir, "todo.txt");
-        try {
-            items = new ArrayList<String>(FileUtils.readLines(todoFile));
-        } catch (IOException e) {
-            items = new ArrayList<String>();
-        }
-    }
-
-    private void writeItems() {
-        File filesDir = getFilesDir();
-        File todoFile = new File(filesDir, "todo.txt");
-        try {
-            FileUtils.writeLines(todoFile, items);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     private void launchEditItemView(String item, int position) {
@@ -89,19 +66,28 @@ public class MainActivity extends AppCompatActivity {
     public void onAddItem(View v) {
         EditText etNewItem = (EditText) findViewById(R.id.etNewItem);
         String itemText = etNewItem.getText().toString();
-        itemsAdapter.add(itemText);
+        ToDoDatabaseHelper databaseHelper = ToDoDatabaseHelper.getInstance(this);
+
+        Task newTask = new Task();
+        newTask.name = itemText;
+        databaseHelper.addTask(newTask);
+        itemsAdapter.add(newTask);
         etNewItem.setText("");
-        writeItems();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        final ToDoDatabaseHelper databaseHelper = ToDoDatabaseHelper.getInstance(this);
+
         if (requestCode == REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 String item = data.getExtras().getString("item");
                 int position = data.getExtras().getInt("position");
-                items.set(position, item);
-                writeItems();
+
+                databaseHelper.updateTask(items.get(position).id, item);
+                Task currentTask = items.get(position);
+                currentTask.name = item;
+                items.set(position, currentTask);
                 itemsAdapter.notifyDataSetChanged();
                 Toast.makeText(this, "Edited Successfully", Toast.LENGTH_SHORT).show();
             }
