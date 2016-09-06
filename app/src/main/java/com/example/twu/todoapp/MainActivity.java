@@ -1,6 +1,5 @@
 package com.example.twu.todoapp;
 
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -86,13 +85,6 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
-    private void launchEditItemView(String item, int position) {
-        Intent i = new Intent(MainActivity.this, EditItemActivity.class);
-        i.putExtra("toDoItem", item);
-        i.putExtra("position", position);
-        startActivityForResult(i, REQUEST_CODE);
-    }
-
     public void onAddItem(View v) {
         EditText etNewItem = (EditText) findViewById(R.id.etNewItem);
         String itemText = etNewItem.getText().toString();
@@ -103,25 +95,6 @@ public class MainActivity extends AppCompatActivity {
         databaseHelper.addTask(newTask);
         itemsAdapter.add(newTask);
         etNewItem.setText("");
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        final ToDoDatabaseHelper databaseHelper = ToDoDatabaseHelper.getInstance(this);
-
-        if (requestCode == REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                String item = data.getExtras().getString("item");
-                int position = data.getExtras().getInt("position");
-
-                databaseHelper.updateTask(items.get(position).id, item);
-                Task currentTask = items.get(position);
-                currentTask.name = item;
-                items.set(position, currentTask);
-                itemsAdapter.notifyDataSetChanged();
-                Toast.makeText(this, "Edited Successfully", Toast.LENGTH_SHORT).show();
-            }
-        }
     }
 
     @Override
