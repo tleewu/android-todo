@@ -42,8 +42,8 @@ public class AddTaskDialogFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View dialogView = inflater.inflate(R.layout.fragment_add_task, container);
-        Spinner prioritySpinner = (Spinner) dialogView.findViewById(R.id.spinner1);
-        Spinner timeEstimateSpinner = (Spinner) dialogView.findViewById(R.id.spinner);
+        Spinner prioritySpinner = (Spinner) dialogView.findViewById(R.id.priority);
+        Spinner timeEstimateSpinner = (Spinner) dialogView.findViewById(R.id.timeEstimate);
 
         ArrayAdapter<CharSequence> priorityAdapter = ArrayAdapter.createFromResource(
                 getContext(),
