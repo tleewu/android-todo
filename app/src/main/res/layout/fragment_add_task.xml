@@ -11,12 +11,14 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/editItemField"
+        android:id="@+id/addItemField"
+        android:layout_marginTop="28dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="42dp"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:hint="ie. buy Mom a mother&apos;s day gift..."
+        android:textSize="14dp" />
 
     <Spinner
         android:layout_width="wrap_content"
@@ -24,10 +26,9 @@
         android:id="@+id/spinner1"
         android:background="@android:drawable/btn_dropdown"
         android:spinnerMode="dropdown"
-        android:layout_below="@+id/editItemField"
+        android:layout_below="@+id/addItemField"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="45dp">
+        android:layout_alignParentStart="true">
     </Spinner>
 
     <Spinner
@@ -43,10 +44,12 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Save"
-        android:id="@+id/btnSave"
-        android:layout_marginTop="51dp"
-        android:layout_below="@+id/spinner"
-        android:layout_alignRight="@+id/spinner"
-        android:layout_alignEnd="@+id/spinner" />
+        android:text="Add"
+        android:id="@+id/btnAdd"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="161dp" />
+
+
 </RelativeLayout>

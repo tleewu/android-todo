@@ -3,10 +3,11 @@ package com.example.twu.todoapp;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -31,6 +32,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setCustomView(R.layout.action_bar);
+
+        ImageView addButton = (ImageView) findViewById(R.id.btnCustomAction);
+        assert addButton != null;
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showAddDialog();
+            }
+        });
         setContentView(R.layout.activity_main);
         ToDoDatabaseHelper databaseHelper = ToDoDatabaseHelper.getInstance(this);
 
@@ -60,6 +72,21 @@ public class MainActivity extends AppCompatActivity {
         editTaskDialogFragment.show(fm, "fragment_edit_task");
     }
 
+    private void showAddDialog () {
+        final ToDoDatabaseHelper databaseHelper = ToDoDatabaseHelper.getInstance(this);
+        FragmentManager fm = getSupportFragmentManager();
+        AddTaskDialogFragment addTaskDialogFragment = AddTaskDialogFragment.newInstance(
+                new AddTaskDialogFragment.OnSaveListener() {
+                    @Override
+                    public void onSave(Task task) {
+                        databaseHelper.addTask(task);
+                        itemsAdapter.add(task);
+                    }
+                }
+        );
+        addTaskDialogFragment.show(fm, "fragment_add_task");
+    }
+
     private void setupListViewListener() {
         final ToDoDatabaseHelper databaseHelper = ToDoDatabaseHelper.getInstance(this);
 
@@ -83,18 +110,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
         );
-    }
-
-    public void onAddItem(View v) {
-        EditText etNewItem = (EditText) findViewById(R.id.etNewItem);
-        String itemText = etNewItem.getText().toString();
-        ToDoDatabaseHelper databaseHelper = ToDoDatabaseHelper.getInstance(this);
-
-        Task newTask = new Task();
-        newTask.name = itemText;
-        databaseHelper.addTask(newTask);
-        itemsAdapter.add(newTask);
-        etNewItem.setText("");
     }
 
     @Override

@@ -15,35 +15,33 @@ import android.widget.Spinner;
 /**
  * Created by twu on 9/5/16.
  */
-public class EditTaskDialogFragment extends DialogFragment {
+public class AddTaskDialogFragment extends DialogFragment {
     public static final String KEY_ITEM_FIELD = "editItemField";
-    private EditText mEditText;
-    private View saveButton;
+    private EditText mAddTask;
+    private View addButton;
     private OnSaveListener onSaveListener;
-    public Task task;
+    public Task task = new Task();
 
     public interface OnSaveListener {
-        void onSave(String editedText, Task task);
+        void onSave(Task task);
     }
 
-    public EditTaskDialogFragment() {
+    public AddTaskDialogFragment() {
         // Empty constructor is required for DialogFragment
         // Make sure not to add arguments to the constructor
         // Use `newInstance` instead as shown below
     }
 
-    public static EditTaskDialogFragment newInstance(Task task, OnSaveListener onSaveListener) {
-        EditTaskDialogFragment frag = new EditTaskDialogFragment();
+    public static AddTaskDialogFragment newInstance(OnSaveListener onSaveListener) {
+        AddTaskDialogFragment frag = new AddTaskDialogFragment();
         frag.setOnSaveListener(onSaveListener);
-        frag.task = task;
         return frag;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        final View dialogView = inflater.inflate(R.layout.fragment_edit_task, container);
+        final View dialogView = inflater.inflate(R.layout.fragment_add_task, container);
         Spinner prioritySpinner = (Spinner) dialogView.findViewById(R.id.spinner1);
         Spinner timeEstimateSpinner = (Spinner) dialogView.findViewById(R.id.spinner);
 
@@ -64,7 +62,7 @@ public class EditTaskDialogFragment extends DialogFragment {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
+                task.priority = "Low";
             }
         });
 
@@ -76,30 +74,25 @@ public class EditTaskDialogFragment extends DialogFragment {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
+                task.timeEstimate = 1;
             }
         });
 
         prioritySpinner.setAdapter(priorityAdapter);
         timeEstimateSpinner.setAdapter(timeEstimateAdapter);
 
-        prioritySpinner.setSelection(priorityAdapter.getPosition(task.priority));
-        timeEstimateSpinner.setSelection(task.timeEstimate-1);
-
-        mEditText = (EditText) dialogView.findViewById(R.id.editItemField);
-        saveButton = dialogView.findViewById(R.id.btnSave);
-        saveButton.setOnClickListener(new View.OnClickListener() {
+        mAddTask = (EditText) dialogView.findViewById(R.id.addItemField);
+        addButton = dialogView.findViewById(R.id.btnAdd);
+        addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dismiss();
                 if (onSaveListener != null) {
-                    onSaveListener.onSave(mEditText.getText().toString(), task);
+                    task.name=mAddTask.getText().toString();
+                    onSaveListener.onSave(task);
                 }
             }
         });
-        if (task != null) {
-            mEditText.setText(task.name);
-        }
         return dialogView;
     }
 
@@ -107,9 +100,9 @@ public class EditTaskDialogFragment extends DialogFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         // Get field from view
-        mEditText = (EditText) view.findViewById(R.id.editItemField);
+        mAddTask = (EditText) view.findViewById(R.id.addItemField);
         // Show soft keyboard automatically and request focus to field
-        mEditText.requestFocus();
+        mAddTask.requestFocus();
         getDialog().getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
