@@ -62,10 +62,9 @@ public class MainActivity extends AppCompatActivity {
         EditTaskDialogFragment editTaskDialogFragment = EditTaskDialogFragment.newInstance(task,
                 new EditTaskDialogFragment.OnSaveListener() {
                     @Override
-                    public void onSave(String editedText, Task oldTask) {
-                        oldTask.name = editedText;
+                    public void onSave(int taskId, Task newTask) {
+                        databaseHelper.updateTask(taskId, newTask);
                         itemsAdapter.notifyDataSetChanged();
-                        databaseHelper.updateTask(oldTask.id, editedText);
                         Toast.makeText(getApplicationContext(), "Edited Successfully", Toast.LENGTH_SHORT).show();
                     }
                 });

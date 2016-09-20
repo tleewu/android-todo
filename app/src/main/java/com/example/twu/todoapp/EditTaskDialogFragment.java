@@ -23,7 +23,7 @@ public class EditTaskDialogFragment extends DialogFragment {
     public Task task;
 
     public interface OnSaveListener {
-        void onSave(String editedText, Task task);
+        void onSave(int taskId, Task updatedTask);
     }
 
     public EditTaskDialogFragment() {
@@ -93,7 +93,8 @@ public class EditTaskDialogFragment extends DialogFragment {
             public void onClick(View v) {
                 dismiss();
                 if (onSaveListener != null) {
-                    onSaveListener.onSave(mEditText.getText().toString(), task);
+                    task.name = mEditText.getText().toString();
+                    onSaveListener.onSave(task.id, task);
                 }
             }
         });
